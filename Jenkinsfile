@@ -17,7 +17,7 @@ pipeline {
 
         stage('Git Clone') {
             steps {
-                git branch:'master', git url: 'https://github.com/yourrepo/springboot-project.git'
+                git branch:'master', git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
             }
         }
 
