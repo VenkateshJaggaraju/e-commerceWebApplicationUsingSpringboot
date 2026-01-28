@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        APP_SERVER_IP = "172.31.38.20"
+        APP_SERVER_IP = "172.31.44.8"
         APP_USER = "ubuntu"
         APP_DIR = "/opt/springapp"
         JAR_NAME = "springboot-app.jar"
