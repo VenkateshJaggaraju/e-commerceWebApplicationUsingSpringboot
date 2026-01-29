@@ -6,17 +6,16 @@ pipeline {
     }
 
     environment {
-        APP_SERVER_IP = "172.31.16.113"
+        APP_SERVER_IP = "APP_PRIVATE_IP"
         APP_USER = "ubuntu"
         APP_DIR = "/opt/springapp"
-        JAR_NAME = "springboot-app.jar"
+        JAR_NAME = "yourapp.jar"
     }
 
     stages {
-
         stage('Git Clone') {
             steps {
-                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
+                git url: 'https://github.com/yourrepo.git'
             }
         }
 
@@ -26,41 +25,22 @@ pipeline {
             }
         }
 
-        stage('Copy JAR to App Server') {
+        stage('Copy JAR') {
             steps {
-                sh """
-                scp target/${JAR_NAME} ${APP_USER}@${APP_SERVER_IP}:${APP_DIR}/
-                """
+                sh "scp target/${JAR_NAME} ${APP_USER}@${APP_SERVER_IP}:${APP_DIR}/"
             }
         }
 
         stage('Stop Old App') {
             steps {
-                sh """
-                ssh ${APP_USER}@${APP_SERVER_IP} '
-                pkill -f ${JAR_NAME} || true
-                '
-                """
+                sh "ssh ${APP_USER}@${APP_SERVER_IP} 'pkill -f ${JAR_NAME} || true'"
             }
         }
 
-        stage('Start New App') {
+        stage('Start App') {
             steps {
-                sh """
-                ssh ${APP_USER}@${APP_SERVER_IP} '
-                nohup java -jar ${APP_DIR}/${JAR_NAME} > app.log 2>&1 &
-                '
-                """
+                sh "ssh ${APP_USER}@${APP_SERVER_IP} 'nohup java -jar ${APP_DIR}/${JAR_NAME} &'"
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Spring Boot App Deployed Successfully"
-        }
-        failure {
-            echo "❌ Deployment Failed"
         }
     }
 }
