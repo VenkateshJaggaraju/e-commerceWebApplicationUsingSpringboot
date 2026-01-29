@@ -17,7 +17,6 @@ pipeline {
     }
 
     stages {
-
         stage('Prepare App Directory') {
             steps {
                 sh '''
@@ -72,7 +71,7 @@ pipeline {
                 '''
             }
         }
-        stage('Start App') {
+        stage('Start Spring boot App') {
             when {
                 expression { 
                     return params.RUN_APP
