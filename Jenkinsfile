@@ -9,8 +9,9 @@ pipeline {
         APP_SERVER_IP = "172.31.17.216"
         APP_USER = "ubuntu"
         APP_DIR = "/opt/springapp"
-        JAR_NAME = "yourapp.jar"
+        JAR_NAME = "flipzon.jar"
     }
+
 
     stages {
         stage('Git Clone') {
