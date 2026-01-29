@@ -72,5 +72,24 @@ pipeline {
                 '''
             }
         }
+        stage('Start App') {
+            when {
+                expression { 
+                    return params.RUN_APP
+                }
+            }
+            steps {
+                sh """
+                nohup java -jar ${APP_DIR}/${JAR_NAME} \
+                --server.port=8081 \
+                --server.address=0.0.0.0 \
+                --spring.datasource.url=jdbc:mysql://172.31.7.153:3306/flipzone \
+                --spring.datasource.username=admin \
+                --spring.datasource.password=Hamsi@123 \
+                > ${APP_DIR}/app.log 2>&1 &
+                """
+                echo "Spring Boot app started successfully on 65.0.67.175:8081!"
+            }
+        }
     }
 }
