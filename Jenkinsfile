@@ -2,14 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'   // Make sure this matches your Jenkins Maven tool
+        maven 'maven'
+    }
+
+    parameters {
+        booleanParam(name: 'RUN_APP', defaultValue: true, description: 'Check to start Spring Boot app')
     }
 
     environment {
         APP_DIR = "/opt/springapp"
-        JAR_NAME = "flipzon.jar"             // adjust if needed
-        APP_SERVER_IP = "172.31.17.216"      // your app server private IP
-        DB_SERVER_IP = "172.31.7.153"        // your DB server private IP
+        JAR_NAME = "flipzon.jar"      
+        APP_SERVER_IP = "172.31.17.216"  
+        DB_SERVER_IP = "172.31.7.153"  
     }
 
     stages {
@@ -51,8 +55,12 @@ pipeline {
         }
 
         stage('Start App') {
+            when {
+                expression { return params.RUN_APP }
+            }
             steps {
                 sh "nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
+                echo "Spring Boot app started successfully!"
             }
         }
 
