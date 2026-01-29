@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        APP_SERVER_IP = "APP_PRIVATE_IP"
+        APP_SERVER_IP = "172.31.41.238"
         APP_USER = "ubuntu"
         APP_DIR = "/opt/springapp"
         JAR_NAME = "yourapp.jar"
@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Git Clone') {
             steps {
-                git url: 'https://github.com/yourrepo.git'
+                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
             }
         }
 
