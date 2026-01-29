@@ -3,17 +3,20 @@ pipeline {
 
     tools {
         maven 'maven'
+        jdk 'jdk17'
     }
 
     environment {
         APP_DIR = "/opt/springapp"
-        JAR_NAME = "flipzon-0.0.1-SNAPSHOT.jar" // adjust if needed
-        APP_SERVER_IP = "172.31.17.216"         // your app server private IP
-        DB_SERVER_IP = "172.31.7.153"           // your DB server private IP
+        JAR_NAME = "flipzon-0.0.1-SNAPSHOT.jar" // Adjust if Spring Boot renamed it
     }
 
     stages {
-
+        stage('Git Clone') {
+            steps {
+                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
+            }
+        }
         stage('Prepare App Directory') {
             steps {
                 sh '''
@@ -21,12 +24,6 @@ pipeline {
                 chown -R $(whoami) ${APP_DIR}
                 chmod -R 755 ${APP_DIR}
                 '''
-            }
-        }
-
-        stage('Git Clone') {
-            steps {
-                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
             }
         }
 
@@ -64,15 +61,6 @@ pipeline {
         stage('Start App') {
             steps {
                 sh "nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
-            }
-        }
-
-        stage('Show Server IPs') {
-            steps {
-                sh '''
-                echo "App Server Private IP: ${APP_SERVER_IP}"
-                echo "DB Server Private IP: ${DB_SERVER_IP}"
-                '''
             }
         }
     }
