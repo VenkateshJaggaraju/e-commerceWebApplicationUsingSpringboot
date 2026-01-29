@@ -16,6 +16,15 @@ pipeline {
                 git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
             }
         }
+        stage('Prepare App Directory') {
+            steps {
+                sh '''
+                mkdir -p ${APP_DIR}
+                chown -R $(whoami) ${APP_DIR}
+                chmod -R 755 ${APP_DIR}
+                '''
+            }
+        }
 
         stage('Build JAR') {
             steps {
