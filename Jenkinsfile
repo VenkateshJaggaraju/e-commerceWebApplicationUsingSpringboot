@@ -12,7 +12,6 @@ pipeline {
         JAR_NAME = "flipzon.jar"
     }
 
-
     stages {
         stage('Git Clone') {
             steps {
@@ -21,28 +20,27 @@ pipeline {
         }
 
         stage('Build JAR') {
-    steps {
-        sh 'mvn clean package -DskipTests'
-    }
-}
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
 
-stage('Copy JAR') {
-    steps {
-        sh 'cp target/*.jar /opt/springapp/'
-    }
-}
+        stage('Copy JAR') {
+            steps {
+                sh "cp target/${env.JAR_NAME} ${env.APP_DIR}/"
+            }
+        }
 
-stage('Stop Old App') {
-    steps {
-        sh 'pkill -f flipzon.jar || true'
-    }
-}
+        stage('Stop Old App') {
+            steps {
+                sh "pkill -f ${env.JAR_NAME} || true"
+            }
+        }
 
-stage('Start App') {
-    steps {
-        sh 'nohup java -jar /opt/springapp/flipzon.jar > app.log 2>&1 &'
-    }
-}
-
+        stage('Start App') {
+            steps {
+                sh "nohup java -jar ${env.APP_DIR}/${env.JAR_NAME} > ${env.APP_DIR}/app.log 2>&1 &"
+            }
+        }
     }
 }
