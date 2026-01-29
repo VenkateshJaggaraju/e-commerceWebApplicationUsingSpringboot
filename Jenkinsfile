@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'
+        maven 'maven' // Make sure this matches your Jenkins Maven tool name
     }
 
     environment {
@@ -10,6 +10,7 @@ pipeline {
         APP_USER = "ubuntu"
         APP_DIR = "/opt/springapp"
         JAR_NAME = "flipzon.jar"
+        SSH_KEY = "/home/jenkins/.ssh/id_rsa" // Path to Jenkins private key
     }
 
     stages {
@@ -25,21 +26,27 @@ pipeline {
             }
         }
 
-        stage('Copy JAR') {
+        stage('Copy JAR to Remote Server') {
             steps {
-                sh "cp target/${env.JAR_NAME} ${env.APP_DIR}/"
+                sh """
+                    scp -i ${SSH_KEY} target/${JAR_NAME} ${APP_USER}@${APP_SERVER_IP}:${APP_DIR}/
+                """
             }
         }
 
-        stage('Stop Old App') {
+        stage('Stop Old App on Remote') {
             steps {
-                sh "pkill -f ${env.JAR_NAME} || true"
+                sh """
+                    ssh -i ${SSH_KEY} ${APP_USER}@${APP_SERVER_IP} 'pkill -f ${JAR_NAME} || true'
+                """
             }
         }
 
-        stage('Start App') {
+        stage('Start App on Remote') {
             steps {
-                sh "nohup java -jar ${env.APP_DIR}/${env.JAR_NAME} > ${env.APP_DIR}/app.log 2>&1 &"
+                sh """
+                    ssh -i ${SSH_KEY} ${APP_USER}@${APP_SERVER_IP} 'nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &'
+                """
             }
         }
     }
