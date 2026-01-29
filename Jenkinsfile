@@ -21,27 +21,28 @@ pipeline {
         }
 
         stage('Build JAR') {
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
+    steps {
+        sh 'mvn clean package -DskipTests'
+    }
+}
 
-        stage('Copy JAR') {
-            steps {
-                sh "scp target/${JAR_NAME} ${APP_USER}@${APP_SERVER_IP}:${APP_DIR}/"
-            }
-        }
+stage('Copy JAR') {
+    steps {
+        sh 'cp target/*.jar /opt/springapp/'
+    }
+}
 
-        stage('Stop Old App') {
-            steps {
-                sh "ssh ${APP_USER}@${APP_SERVER_IP} 'pkill -f ${JAR_NAME} || true'"
-            }
-        }
+stage('Stop Old App') {
+    steps {
+        sh 'pkill -f flipzon.jar || true'
+    }
+}
 
-        stage('Start App') {
-            steps {
-                sh "ssh ${APP_USER}@${APP_SERVER_IP} 'nohup java -jar ${APP_DIR}/${JAR_NAME} &'"
-            }
-        }
+stage('Start App') {
+    steps {
+        sh 'nohup java -jar /opt/springapp/flipzon.jar > app.log 2>&1 &'
+    }
+}
+
     }
 }
