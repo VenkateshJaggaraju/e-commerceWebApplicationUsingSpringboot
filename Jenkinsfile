@@ -10,7 +10,7 @@ pipeline {
         APP_DIR = "/opt/springapp"
         JAR_NAME = "flipzon-0.0.1-SNAPSHOT.jar" // adjust if needed
         APP_SERVER_IP = "172.31.17.216"         // your app server private IP
-        DB_SERVER_IP = "172.31.20.50"           // your DB server private IP
+        DB_SERVER_IP = "172.31.7.153"           // your DB server private IP
     }
 
     stages {
