@@ -2,20 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'
+        maven 'maven'   // Make sure this matches your Jenkins Maven tool
     }
 
     environment {
         APP_DIR = "/opt/springapp"
-        JAR_NAME = "flipzon-0.0.1-SNAPSHOT.jar" // Adjust if Spring Boot renamed it
+        JAR_NAME = "flipzon.jar"             // adjust if needed
+        APP_SERVER_IP = "172.31.17.216"      // your app server private IP
+        DB_SERVER_IP = "172.31.20.50"        // your DB server private IP
     }
 
     stages {
-        stage('Git Clone') {
-            steps {
-                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
-            }
-        }
+
         stage('Prepare App Directory') {
             steps {
                 sh '''
@@ -26,15 +24,15 @@ pipeline {
             }
         }
 
-        stage('Build JAR') {
+        stage('Git Clone') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                git url: 'https://github.com/VenkateshJaggaraju/e-commerceWebApplicationUsingSpringboot.git'
             }
         }
 
-        stage('Verify JAR') {
+        stage('Build JAR') {
             steps {
-                sh 'ls -l target/'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
@@ -47,12 +45,7 @@ pipeline {
         stage('Stop Old App') {
             steps {
                 sh '''
-                if pgrep -f ${JAR_NAME}; then
-                    pkill -f ${JAR_NAME}
-                    echo "Old app stopped"
-                else
-                    echo "No running app found"
-                fi
+                pkill -f ${JAR_NAME} || true
                 '''
             }
         }
@@ -60,6 +53,15 @@ pipeline {
         stage('Start App') {
             steps {
                 sh "nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
+            }
+        }
+
+        stage('Show Server IPs') {
+            steps {
+                sh '''
+                echo "App Server Private IP: ${APP_SERVER_IP}"
+                echo "DB Server Private IP: ${DB_SERVER_IP}"
+                '''
             }
         }
     }
