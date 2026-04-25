@@ -101,5 +101,5 @@ com.flipzon
 
 ## 👨‍💻 Author
 
-**J Venkatesh**
+** Venkatesh Jaggaraju **
 Java Full Stack Developer & DevOps Engineer
